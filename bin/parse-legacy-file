@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+get_legacy_version() {
+  current_file="$1"
+  basename="$(basename -- "$current_file")"
+
+  if [ "$basename" == ".postgres-version" ]; then
+    PG_VERSION_VALUE="$(head -1 "$current_file")"
+  elif [ "$basename" == ".env.local" ] || [ "$basename" == ".env" ]; then
+    # look for PUBLISH_POSTGRES_VERSION=, and trim it
+    PG_VERSION_LINE="$(grep "PUBLISH_POSTGRES_VERSION=" "$current_file" | head -1)"
+    PG_VERSION_VALUE="${PG_VERSION_LINE#PUBLISH_POSTGRES_VERSION=}"
+  fi
+
+  PG_VERSION_MAJOR="${PG_VERSION_VALUE%.*}"
+
+  if [ -n "$PG_VERSION_MAJOR" ]; then
+    echo "$PG_VERSION_MAJOR"
+  fi
+}
+
+get_legacy_version "$1"

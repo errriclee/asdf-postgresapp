@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+echo ".postgres-version .env.local .env"
