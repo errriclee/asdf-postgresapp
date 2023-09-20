@@ -12,8 +12,6 @@ fail() {
 	exit 1
 }
 
-curl_opts=(-fsSL)
-
 sort_versions() {
 	sed 'h; s/[+-]/./g; s/.p\([[:digit:]]\)/.z\1/; s/$/.z/; G; s/\n/ /' |
 		LC_ALL=C sort -t. -k 1,1 -k 2,2n -k 3,3n -k 4,4n -k 5,5n | awk '{print $2}'
@@ -22,11 +20,11 @@ sort_versions() {
 list_all_versions() {
 	# Only show versions available in Postgres.app versions
 	# find * removes leading ./, -type d removes latest symlink
-	(cd "$POSTGRESAPP_VERSIONS_PATH" && find * -type d -depth 0)
+	(cd "$POSTGRESAPP_VERSIONS_PATH" && find -- * -maxdepth 0 -type d)
 }
 
 download_release() {
-	local version filename url
+	local version filename
 	version="$1"
 	filename="$2"
 
@@ -56,7 +54,7 @@ install_version() {
 		echo "Linking binaries from ${src_bin_path}"
 
 		# symlink all binaries
-		find "$src_bin_path" \( -type l -o -type f \) -depth 1 -perm +111 | while read pgexe
+		find "$src_bin_path" \( -type l -o -type f \) -depth 1 -perm +111 | while read -r pgexe
 		do
 			local bin_filename
 			bin_filename="$(basename "$pgexe")"
