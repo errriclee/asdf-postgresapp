@@ -22,7 +22,7 @@ sort_versions() {
 list_all_versions() {
 	# Only show versions available in Postgres.app versions
 	# find * removes leading ./, -type d removes latest symlink
-	(cd "$POSTGRESAPP_VERSIONS_PATH" && find * -type d -depth 0)
+	(cd "$POSTGRESAPP_VERSIONS_PATH" && find -- * -maxdepth 0 -type d)
 }
 
 download_release() {
